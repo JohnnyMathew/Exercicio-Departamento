@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         int opcao = -1;
         List<Departamento> departamentos = new ArrayList<>();
@@ -168,5 +170,110 @@ public class App {
         String nome = input.nextLine();
         departamentos.add(new Departamento(nome));
         System.out.println("Departamento cadastrado com sucesso!");
+    }
+}
+
+class Departamento {
+    private String nome;
+    private List<Funcionario> funcionarios = new ArrayList<>();
+
+    public Departamento(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    @Override
+    public String toString() {
+        return "- " + this.nome;
+    }
+
+    public void AdicionarFuncionario(Funcionario funcionario) {
+        funcionarios.add(funcionario);
+    }
+
+    public void RemoverFuncionario(String nome) {
+        funcionarios.removeIf(f -> f.getNome().equals(nome));
+    }
+
+    public double ObterTotalSalarios() {
+        return funcionarios.stream()
+               .mapToDouble(Funcionario::getSalario)
+               .sum();
+    }
+
+    public void PromoverFuncionario(String nome) {
+        funcionarios.stream()
+            .filter(f -> f.getNome().equals(nome))
+            .findFirst()
+            .ifPresentOrElse(
+                f -> f.setSalario(f.getSalario() + 500),
+                () -> System.out.println("Funcionário não localizado!")
+            );
+    }
+
+    public void OrdenarPorNome() {
+        Collections.sort(funcionarios, Comparator.comparing(Funcionario::getNome));
+    }
+
+    public void OrdenarPorCPF() {
+        Collections.sort(funcionarios, Comparator.comparing(Funcionario::getCpf));
+    }
+
+    public void OrdenarPorSalario() {
+        Collections.sort(funcionarios, Comparator.comparingDouble(Funcionario::getSalario));
+    }
+
+    public void ExibirFuncionariosOrdenados() {
+        if (funcionarios.isEmpty()) {
+            System.out.println("Nenhum funcionário cadastrado neste departamento.");
+            return;
+        }
+        
+        funcionarios.forEach(f -> 
+            System.out.println(f.getNome() + " - CPF: " + f.getCpf() + " - Salário: R$" + f.getSalario())
+        );
+    }
+}
+
+class Funcionario {
+    private String nome;
+    private String cpf;
+    private double salario;
+
+    public Funcionario(String nome, String cpf, double salario) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.salario = salario;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public double getSalario() {
+        return salario;
+    }
+
+    public void setSalario(double salario) {
+        this.salario = salario;
     }
 }
